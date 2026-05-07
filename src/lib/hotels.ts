@@ -40,6 +40,7 @@ export interface HotelWithRooms {
 }
 
 export async function getHotels(params?: {
+  q?: string;
   city?: string;
   country?: string;
   minPrice?: number;
@@ -99,7 +100,18 @@ export async function getHotels(params?: {
     }
   ];
 
-  return mockHotels;
+  // Filter by search query
+  let filteredHotels = mockHotels;
+  if (params?.q) {
+    const query = params.q.toLowerCase().trim();
+    filteredHotels = mockHotels.filter(hotel =>
+      hotel.name.toLowerCase().includes(query) ||
+      hotel.city.toLowerCase().includes(query) ||
+      hotel.country.toLowerCase().includes(query)
+    );
+  }
+
+  return filteredHotels;
 }
 
 export async function getHotelById(id: string): Promise<HotelWithRooms | null> {

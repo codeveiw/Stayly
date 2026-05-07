@@ -49,23 +49,21 @@ function HotelsList() {
   const [openMobile, setOpenMobile] = useState(false);
 
   const { data: hotels = [], isLoading } = useQuery({
-    queryKey: ['hotels'],
-    queryFn: () => getHotels()
+    queryKey: ['hotels', search.q],
+    queryFn: () => getHotels({ q: search.q })
   });
 
   const filtered = useMemo(() => {
-    const q = (search.q || "").toLowerCase().trim();
     let list = hotels.filter((h) => {
-      if (q && !`${h.name} ${h.city} ${h.country}`.toLowerCase().includes(q)) return false;
       if (h.rating < minRating) return false;
       if (selected.length && !selected.every((a) => h.amenities.includes(a))) return false;
       return true;
     });
-    if (search.sort === "priceAsc") list = [...list].sort((a, b) => a.price - b.price);
-    else if (search.sort === "priceDesc") list = [...list].sort((a, b) => b.price - a.price);
+    if (search.sort === "priceAsc") list = [...list].sort((a, b) => (a.price || 0) - (b.price || 0));
+    else if (search.sort === "priceDesc") list = [...list].sort((a, b) => (b.price || 0) - (a.price || 0));
     else list = [...list].sort((a, b) => b.rating - a.rating);
     return list;
-  }, [search.q, search.sort, hotels, minRating, selected]);
+  }, [hotels, search.sort, minRating, selected]);
 
   const toggleAmenity = (a: AmenityKey) =>
     setSelected((prev) => (prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a]));
