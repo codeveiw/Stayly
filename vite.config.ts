@@ -8,6 +8,6 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig(
 {
-    base: "/https://github.com/codeveiw/Stayly/"
+    base: "/"
 }
 );
