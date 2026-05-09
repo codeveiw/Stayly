@@ -21,7 +21,6 @@ import { Route as AdminDashboardRouteImport } from './routes/admin-dashboard'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HotelsIndexRouteImport } from './routes/hotels.index'
-import { Route as FlightsIndexRouteImport } from './routes/flights.index'
 import { Route as HotelsHotelIdRouteImport } from './routes/hotels.$hotelId'
 
 const TermsRoute = TermsRouteImport.update({
@@ -84,11 +83,6 @@ const HotelsIndexRoute = HotelsIndexRouteImport.update({
   path: '/hotels/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FlightsIndexRoute = FlightsIndexRouteImport.update({
-  id: '/flights/',
-  path: '/flights/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const HotelsHotelIdRoute = HotelsHotelIdRouteImport.update({
   id: '/hotels/$hotelId',
   path: '/hotels/$hotelId',
@@ -108,7 +102,6 @@ export interface FileRoutesByFullPath {
   '/success': typeof SuccessRoute
   '/terms': typeof TermsRoute
   '/hotels/$hotelId': typeof HotelsHotelIdRoute
-  '/flights/': typeof FlightsIndexRoute
   '/hotels/': typeof HotelsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -124,7 +117,6 @@ export interface FileRoutesByTo {
   '/success': typeof SuccessRoute
   '/terms': typeof TermsRoute
   '/hotels/$hotelId': typeof HotelsHotelIdRoute
-  '/flights': typeof FlightsIndexRoute
   '/hotels': typeof HotelsIndexRoute
 }
 export interface FileRoutesById {
@@ -141,7 +133,6 @@ export interface FileRoutesById {
   '/success': typeof SuccessRoute
   '/terms': typeof TermsRoute
   '/hotels/$hotelId': typeof HotelsHotelIdRoute
-  '/flights/': typeof FlightsIndexRoute
   '/hotels/': typeof HotelsIndexRoute
 }
 export interface FileRouteTypes {
@@ -159,7 +150,6 @@ export interface FileRouteTypes {
     | '/success'
     | '/terms'
     | '/hotels/$hotelId'
-    | '/flights/'
     | '/hotels/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -175,7 +165,6 @@ export interface FileRouteTypes {
     | '/success'
     | '/terms'
     | '/hotels/$hotelId'
-    | '/flights'
     | '/hotels'
   id:
     | '__root__'
@@ -191,7 +180,6 @@ export interface FileRouteTypes {
     | '/success'
     | '/terms'
     | '/hotels/$hotelId'
-    | '/flights/'
     | '/hotels/'
   fileRoutesById: FileRoutesById
 }
@@ -208,7 +196,6 @@ export interface RootRouteChildren {
   SuccessRoute: typeof SuccessRoute
   TermsRoute: typeof TermsRoute
   HotelsHotelIdRoute: typeof HotelsHotelIdRoute
-  FlightsIndexRoute: typeof FlightsIndexRoute
   HotelsIndexRoute: typeof HotelsIndexRoute
 }
 
@@ -298,13 +285,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HotelsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/flights/': {
-      id: '/flights/'
-      path: '/flights'
-      fullPath: '/flights/'
-      preLoaderRoute: typeof FlightsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/hotels/$hotelId': {
       id: '/hotels/$hotelId'
       path: '/hotels/$hotelId'
@@ -328,7 +308,6 @@ const rootRouteChildren: RootRouteChildren = {
   SuccessRoute: SuccessRoute,
   TermsRoute: TermsRoute,
   HotelsHotelIdRoute: HotelsHotelIdRoute,
-  FlightsIndexRoute: FlightsIndexRoute,
   HotelsIndexRoute: HotelsIndexRoute,
 }
 export const routeTree = rootRouteImport

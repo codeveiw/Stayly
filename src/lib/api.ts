@@ -25,17 +25,25 @@ class ApiClient {
     if (!localStorage.getItem('mockHotels')) {
       localStorage.setItem('mockHotels', JSON.stringify(hotels));
     } else {
-      // Migration: Remove Nile View Paradise (id 4) and ensure Paris, Dubai, Tokyo, Santorini (ids 5,6,7,8) exist
+      // Migration: Ensure all new default hotels are merged into local storage
       let savedHotels = JSON.parse(localStorage.getItem('mockHotels') || '[]');
 
+      // Clean up previous issues if needed (id '4' was previously removed)
       savedHotels = savedHotels.filter((h: any) => h.id !== '4');
 
-      const missingHotels = hotels.filter(h => ['5', '6', '7', '8'].includes(h.id));
-      for (const missing of missingHotels) {
-        if (!savedHotels.find((h: any) => h.id === missing.id)) {
-          savedHotels.push(missing);
+      // Add any new hotel from code that isn't in localStorage yet
+      for (const defaultHotel of hotels) {
+        const existing = savedHotels.find((h: any) => h.id === defaultHotel.id);
+        if (!existing) {
+          savedHotels.push(defaultHotel);
+        } else {
+          // Force fix images if they were broken in localStorage
+          existing.image = defaultHotel.image;
+          existing.images = defaultHotel.images;
         }
       }
+
+      // Update local storage
       localStorage.setItem('mockHotels', JSON.stringify(savedHotels));
     }
   }

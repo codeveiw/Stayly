@@ -23,7 +23,6 @@ export function Navbar() {
   const navLinks = [
     { to: "/", label: t("nav.home") },
     { to: "/hotels", label: t("nav.hotels") },
-    { to: "/flights", label: t("nav.flights") },
     { to: "/about", label: t("about.title") },
     { to: "/contact", label: t("contact.title") },
   ] as const;

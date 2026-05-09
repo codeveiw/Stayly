@@ -66,7 +66,7 @@ function HotelsList() {
     else if (search.sort === "priceDesc") list = [...list].sort((a, b) => (b.price || 0) - (a.price || 0));
     else list = [...list].sort((a, b) => b.rating - a.rating);
     return list;
-  }, [hotels, search.sort, minRating, selected]);
+  }, [hotels, search.sort, minRating, selected, priceRange]);
 
   const toggleAmenity = (a: AmenityKey) =>
     setSelected((prev) => (prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a]));
@@ -109,9 +109,9 @@ function HotelsList() {
               key={r}
               type="button"
               onClick={() => setMinRating(r)}
-              className={`flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${minRating === r
+              className={`flex items-center gap-1 rounded-full border px-2 py-1.5 text-xs font-medium transition-colors ${minRating === r
                 ? "border-primary bg-primary text-primary-foreground"
-                : "border-border hover:bg-muted"
+                : "border-border hover:bg-muted "
                 }`}
             >
               <Star className="h-3 w-3" /> {r === 0 ? "Any" : `${r}+`}

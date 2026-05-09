@@ -1,112 +1,55 @@
-# Stayly - Hotel & Travel Booking Application
+# Stayly - Project Documentation
 
-Stayly is a premium, full-stack web application designed for seamlessly discovering and booking hotels, resorts, and travel destinations. With a modern, highly responsive design and built-in integration to real-world hotel data (via RapidAPI), Stayly offers users an elite travel planning experience.
-
-## 🚀 Key Features
-
-*   **Advanced Hotel Search**: Deeply integrated functional search bar that allows queries by destination, check-in/check-out dates, and guest demographics.
-*   **Real-time Data Integration**: Features integration with the Booking.com RapidAPI for real hotel/property data and dynamic pricing.
-*   **Responsive UI & Animations**: Built strictly with Tailwind CSS ensuring pixel-perfect layout across mobile and desktop interfaces, peppered with subtle micro-animations for luxurious aesthetics.
-*   **Secure Authentication & Admin**: Fully connected Node.js/Express backend capable of JWT-based login tracking and role-based permissions context.
-*   **Internationalization (i18n)**: Out-of-the-box infrastructure specifically designed to support multiple languages seamlessly.
-*   **Rich Component Library**: Radix UI based components ensuring high accessibility standards (via elements like Modals, Toasts with `sonner`, complex Dropdowns).
+This document outlines all the **actively working features** in the Stayly project, how they operate under the hood, and how the core logic is structured. It is guaranteed to only mention features that are 100% functional and implemented.
 
 ---
 
-## 🛠️ Technology Stack
+## 🏗️ Core Architecture (How it works)
 
-### Frontend
-*   **Framework**: React 19 (via Vite)
-*   **Routing**: TanStack Router (File-based Routing structure)
-*   **Styling**: Tailwind CSS + `clsx` / `tailwind-merge`
-*   **State Management / Fetching**: React Hooks, TanStack React Query (`@tanstack/react-query`)
-*   **Forms & Validation**: React Hook Form with Zod
-*   **Icons & Notifications**: Lucide React, Sonner (Toasts)
+Currently, the project functions independently of an external backend server by utilizing a **Robust LocalStorage Mock API (`src/lib/api.ts`)**. 
 
-### Backend
-*   **Server**: Node.js & Express.js
-*   **Database**: MongoDB (via Mongoose)
-*   **Authentication**: JWT (JSON Web Tokens) & `bcryptjs`
-*   **3rd-Party APIs**: Integration strictly with Axios/Node-Fetch grabbing external Booking.com logic.
-*   **Payment & Email Utilities**: Stripe SDK configured alongside Nodemailer.
+1. **Auto-Migration System (`initMockEngine`)**:
+   When the application is launched for the very first time on any device (or downloaded newly from GitHub), the API engine automatically initializes standard databases (Users, Bookings, Hotels) directly into the browser's Local Storage.
+2. **Missing Image Recovery**:
+   The engine automatically cycles through missing hotel image IDs and ensures that valid, working images are attached and synchronized before the application renders.
+3. **Session Management**:
+   The `ApiClient` simulates network delays (e.g., `delay(400)`) to provide a realistic loading user experience. Sessions are managed by pushing a mock token linking to standard users.
 
 ---
 
-## 📂 Project Structure
+## ✨ Fully Functional Features
 
-```text
-stay/
-├── backend/                  # Express.js REST API
-│   ├── .env                  # Backend Secrets (MongoDB URI, JWT, RapidAPI key)
-│   ├── models/               # MongoDB Mongoose schemas (Hotel, Room, User)
-│   ├── routes/               # Express specific path endpoints
-│   ├── middleware/           # Security/Auth validators 
-│   ├── server.js             # API Initialization 
-│   └── package.json          
-│
-├── src/                      # React Frontend Application
-│   ├── assets/               # Local static images and resources
-│   ├── components/           # Reusable UI building blocks
-│   │   └── ui/               # Radix UI implementations (buttons, popovers, etc.)
-│   ├── contexts/             # Application global context (Auth, Theme)
-│   ├── hooks/                # Specialized custom React utilities
-│   ├── lib/                  # Generic utils and Dummy data fallbacks
-│   ├── routes/               # TanStack File-Based Routes (Pages: Home, Search Results, Contact)
-│   └── services/           # External API caller definitions (e.g., hotelService.js)
-│
-├── package.json              # Frontend Node dependencies
-├── vite.config.ts            # Vite Configuration Engine
-└── routeTree.gen.ts          # Auto-generated TanStack Route tree
-```
+### 1. 🏨 Search & Discovery (Hotel Catalog)
+* **Functional Database**: An expansive offline default catalog consisting of **26 Premium Hotels** spread out globally across more than **10 tourist countries** including Egypt, USA, France, Japan, UAE, Greece, Italy, Turkey, Maldives, Spain, Thailand, and the UK.
+* **Smart Search Bar**: The top search bar actively works and filters the catalog correctly by **Hotel Name**, **City**, or **Country**.
+* **Dynamic Listing Pages**: Hotels are displayed as rich cards with dynamic prices, high-quality images, review counts, stars, and locations.
+* **Dedicated Hotel View (`getHotelById`)**: Users can click on a hotel to see detailed specifics, amenities (WiFi, Pool, etc.), and distinct "mock" Room Categories.
 
----
+### 2. 🔐 Authentication System
+* **User Registration**: Users can create a new account using an email, name, and password. The system checks against duplicate emails.
+* **User Login**: Secure simulated login verifying credentials against LocalStorage.
+* **Persistent Sessions**: Once logged in, the user stays logged in across page refreshes until they choose to log out. There is a specific fallback admin assigned to `admin@stayly.com`.
 
-## ⚙️ Getting Started & Setup
+### 3. 📅 Booking System (User Dashboard)
+* **Checkout/Booking Engine**: Connected cleanly to the Hotel pages. Users can simulate picking dates, passengers, and making a booking.
+* **My Bookings (`/profile`)**: Currently logged-in ordinary users can open their active bookings view to see all historical reservations.
+* **Cancellations**: A user can click to "Cancel" their booking, which instantly shifts the specific booking status from "Confirmed" to "Cancelled" in the database.
 
-### 1. Prerequisites
-Ensure you have the following installed locally:
-*   [Node.js](https://nodejs.org/) (v18+)
-*   [MongoDB](https://www.mongodb.com/) (Local client or Atlas URI)
+### 4. 🎛️ Admin Panel
+There exists a robust admin dashboard interface that reads from the entire local storage ecosystem.
+* **Admin Statistics**: Displays aggregate analytical numbers for **Total Users**, **Active/Total Bookings**, and **Total Platform Revenue**.
+* **Global Users List**: Allows admins to view everyone who has registered on the platform.
+* **Booking Management**: Admins have an interactive table displaying all live platform bookings globally where they can **Change Booking Statuses** (e.g. Approve, Reject, Cancel).
+* **Accommodations Catalog**: Admins have view-access to all cached hotels.
 
-### 2. Environment Variables Configuration
-In the **frontend root directory** (`stay/`), ensure your `.env` contains:
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_key
-```
-
-In the **backend directory** (`stay/backend/`), configure your `.env`:
-```env
-MONGODB_URI=mongodb://localhost:27017/stay
-JWT_SECRET=your-super-secret-jwt-key
-PORT=5000
-RAPIDAPI_KEY=your_booking_com_rapidapi_key
-STRIPE_SECRET_KEY=your_stripe_secret
-```
-
-### 3. Installation
-
-**Build the Backend Layer:**
-```bash
-cd backend
-npm install
-npm run dev
-# The backend server initializes typically on http://localhost:5000
-```
-
-**Build the Frontend Layer:**
-Open a new integrated terminal window:
-```bash
-# Return to the root /stay
-npm install
-npm run dev
-# The standard Vite development environment starts on http://localhost:5173
-```
+### 5. 🌍 Internationalization & Static Content
+* **Multilingual Menu**: Support for internationalization toggles which interact seamlessly with the existing translation systems.
+* **Static Read-Only Pages**: Premium standalone information pages are fully routed via TanStack Router:
+  * About Us
+  * Contact Us
+  * Terms & Conditions
 
 ---
 
-## 📝 Recent System Modifications
-- **Search System Upgrade**: Integrated a `hotelService` that connects standard user input straight to RapidAPI’s external backend, outputting exact queries mapping to newly engineered loading-skeleton UI structures across `/search-results`.
-
-## 🛡️ License
-> This software is generated for private property scaling and proprietary application demonstrations.
+## 🛠️ Excluded / Work in Progress
+*(Note: As per requirements, components missing logic completely such as the `Flights` page module — which is currently disabled/commented out — are not marketed inside this functional scope document).*

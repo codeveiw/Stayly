@@ -13,6 +13,7 @@ const resources = {
         login: "Sign in",
         register: "Sign up",
         logout: "Sign out",
+        flights: "Flights",
       },
       hero: {
         kicker: "Find your next stay",
@@ -257,6 +258,7 @@ const resources = {
         login: "تسجيل الدخول",
         register: "إنشاء حساب",
         logout: "تسجيل الخروج",
+        flights: "رحلات الطيران",
       },
       hero: {
         kicker: "ابحث عن إقامتك القادمة",
