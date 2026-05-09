@@ -1,8 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Search, MapPin, Calendar, Users, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { toast } from "sonner";
 
 export function SearchBar({ compact = false }: { compact?: boolean }) {
   const { t } = useTranslation();
@@ -10,34 +12,78 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
   const today = new Date().toISOString().slice(0, 10);
   const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
 
-  const [location, setLocation] = useState("");
+  const [destination, setDestination] = useState("");
   const [checkIn, setCheckIn] = useState(today);
   const [checkOut, setCheckOut] = useState(tomorrow);
-  const [guests, setGuests] = useState(2);
+  const [adults, setAdults] = useState(2);
+  const [children, setChildren] = useState(0);
+  const [rooms, setRooms] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("recent_searches");
+    if (saved) {
+      try {
+        setRecentSearches(JSON.parse(saved));
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const errors = useMemo(() => {
-    const e: { location?: string; checkIn?: string; checkOut?: string; guests?: string } = {};
-    if (!location.trim()) e.location = t("search.errors.location");
-    if (!checkIn) e.checkIn = t("search.errors.checkIn");
-    if (!checkOut) e.checkOut = t("search.errors.checkOut");
+    const e: { destination?: string; checkIn?: string; checkOut?: string; guests?: string } = {};
+    if (!destination.trim()) e.destination = "Destination is required";
+    if (!checkIn) e.checkIn = "Check-in date is required";
+    if (!checkOut) e.checkOut = "Check-out date is required";
     else if (checkIn && new Date(checkOut) <= new Date(checkIn))
-      e.checkOut = t("search.errors.checkOutAfter");
-    if (!guests || guests < 1) e.guests = t("search.errors.guests");
+      e.checkOut = "Check-out must be after check-in";
+    if (adults < 1) e.guests = "At least 1 adult is required";
+    if (rooms < 1) e.guests = "At least 1 room is required";
     return e;
-  }, [location, checkIn, checkOut, guests, t]);
+  }, [destination, checkIn, checkOut, adults, rooms]);
 
   const isValid = Object.keys(errors).length === 0;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
-    if (!isValid) return;
+
+    if (!isValid) {
+      Object.values(errors).forEach(err => toast.error(err));
+      return;
+    }
+
     setLoading(true);
+
+    const searches = [destination.trim(), ...recentSearches.filter(s => s !== destination.trim())].slice(0, 5);
+    setRecentSearches(searches);
+    localStorage.setItem("recent_searches", JSON.stringify(searches));
+
     await new Promise((r) => setTimeout(r, 350));
     navigate({
-      to: `/hotels?q=${location.trim()}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&sort=rating`,
+      to: `/search-results`,
+      search: {
+        destination: destination.trim(),
+        checkIn,
+        checkOut,
+        adults,
+        children,
+        rooms
+      } as any
     });
     setLoading(false);
   };
@@ -48,28 +94,54 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
     <form
       onSubmit={onSubmit}
       noValidate
-      className={`rounded-2xl border border-border bg-card p-3 shadow-elegant md:p-2 ${
-        compact ? "" : "animate-slide-up"
-      }`}
+      className={`rounded-2xl border border-border bg-card p-3 shadow-elegant md:p-2 ${compact ? "" : "animate-slide-up"
+        }`}
     >
-      <div className="grid gap-3 md:grid-cols-[1.5fr_1fr_1fr_0.8fr_auto] md:gap-2">
-        <Field
-          icon={<MapPin className="h-4 w-4" />}
-          label={t("search.location")}
-          error={showErr("location")}
-        >
-          <input
-            type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder={t("search.locationPh")}
-            aria-invalid={!!showErr("location")}
-            className="w-full bg-transparent text-sm font-medium outline-none placeholder:text-muted-foreground/70"
-          />
-        </Field>
+      <div className="grid gap-3 md:grid-cols-[1.5fr_1fr_1fr_1.2fr_auto] md:gap-2">
+        <div className="relative" ref={suggestionsRef}>
+          <Field
+            icon={<MapPin className="h-4 w-4" />}
+            label={"Destination"}
+            error={showErr("destination")}
+          >
+            <input
+              type="text"
+              value={destination}
+              onChange={(e) => {
+                setDestination(e.target.value);
+                setShowSuggestions(true);
+              }}
+              onFocus={() => setShowSuggestions(true)}
+              placeholder={"City, region, or hotel"}
+              aria-invalid={!!showErr("destination")}
+              className="w-full bg-transparent text-sm font-medium outline-none placeholder:text-muted-foreground/70"
+            />
+          </Field>
+          {showSuggestions && recentSearches.length > 0 && (
+            <div className="absolute top-full left-0 z-50 mt-1 w-full rounded-md border bg-popover shadow-md">
+              <div className="px-3 py-2 text-xs font-semibold text-muted-foreground">Recent Searches</div>
+              <ul>
+                {recentSearches.map((s, i) => (
+                  <li key={i}>
+                    <button
+                      type="button"
+                      className="w-full px-3 py-2 text-left text-sm hover:bg-accent"
+                      onClick={() => {
+                        setDestination(s);
+                        setShowSuggestions(false);
+                      }}
+                    >
+                      {s}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
         <Field
           icon={<Calendar className="h-4 w-4" />}
-          label={t("search.checkin")}
+          label={t("search.checkin", "Check-in")}
           error={showErr("checkIn")}
         >
           <input
@@ -82,7 +154,7 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
         </Field>
         <Field
           icon={<Calendar className="h-4 w-4" />}
-          label={t("search.checkout")}
+          label={t("search.checkout", "Check-out")}
           error={showErr("checkOut")}
         >
           <input
@@ -93,23 +165,58 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
             className="w-full bg-transparent text-sm font-medium outline-none"
           />
         </Field>
-        <Field
-          icon={<Users className="h-4 w-4" />}
-          label={t("search.guests")}
-          error={showErr("guests")}
-        >
-          <select
-            value={guests}
-            onChange={(e) => setGuests(Number(e.target.value))}
-            className="w-full cursor-pointer bg-transparent text-sm font-medium outline-none"
-          >
-            {[1, 2, 3, 4, 5, 6].map((n) => (
-              <option key={n} value={n}>
-                {t("search.guest", { count: n })}
-              </option>
-            ))}
-          </select>
-        </Field>
+        <Popover>
+          <PopoverTrigger asChild>
+            <button type="button" className="text-left">
+              <Field
+                as="div"
+                icon={<Users className="h-4 w-4" />}
+                label={t("search.guests", "Guests")}
+                error={showErr("guests")}
+              >
+                <div className="w-full truncate bg-transparent text-sm font-medium">
+                  {adults} Adults, {children} Children, {rooms} Room{rooms > 1 && "s"}
+                </div>
+              </Field>
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64 p-4">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-sm font-medium">Adults</div>
+                  <div className="text-xs text-muted-foreground">Age 13+</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={() => setAdults(Math.max(1, adults - 1))} className="h-8 w-8 p-0">-</Button>
+                  <span className="w-4 text-center text-sm">{adults}</span>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setAdults(adults + 1)} className="h-8 w-8 p-0">+</Button>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-sm font-medium">Children</div>
+                  <div className="text-xs text-muted-foreground">Ages 0-12</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={() => setChildren(Math.max(0, children - 1))} className="h-8 w-8 p-0">-</Button>
+                  <span className="w-4 text-center text-sm">{children}</span>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setChildren(children + 1)} className="h-8 w-8 p-0">+</Button>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-sm font-medium">Rooms</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={() => setRooms(Math.max(1, rooms - 1))} className="h-8 w-8 p-0">-</Button>
+                  <span className="w-4 text-center text-sm">{rooms}</span>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setRooms(rooms + 1)} className="h-8 w-8 p-0">+</Button>
+                </div>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
         <Button
           type="submit"
           size="lg"
@@ -117,17 +224,9 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
           disabled={loading || (submitted && !isValid)}
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-          <span>{t("search.cta")}</span>
+          <span>{t("search.cta", "Search")}</span>
         </Button>
       </div>
-
-      {submitted && !isValid && (
-        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 px-2 text-xs text-destructive">
-          {Object.values(errors).map((msg, i) => (
-            <span key={i}>• {msg}</span>
-          ))}
-        </div>
-      )}
     </form>
   );
 }
@@ -137,17 +236,18 @@ function Field({
   label,
   children,
   error,
+  as: Component = "label",
 }: {
   icon: React.ReactNode;
   label: string;
   children: React.ReactNode;
   error?: string | false;
+  as?: React.ElementType;
 }) {
   return (
-    <label
-      className={`flex items-center gap-3 rounded-xl border bg-muted/40 px-3 py-2.5 transition-colors focus-within:bg-background ${
-        error ? "border-destructive/60" : "border-transparent focus-within:border-primary/40"
-      }`}
+    <Component
+      className={`flex h-full w-full items-center gap-3 rounded-xl border bg-muted/40 px-3 py-2.5 transition-colors focus-within:bg-background ${error ? "border-destructive/60" : "border-transparent focus-within:border-primary/40"
+        }`}
     >
       <span className="text-muted-foreground">{icon}</span>
       <span className="flex min-w-0 flex-1 flex-col">
@@ -156,6 +256,6 @@ function Field({
         </span>
         {children}
       </span>
-    </label>
+    </Component>
   );
 }

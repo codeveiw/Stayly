@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SuccessRouteImport } from './routes/success'
+import { Route as SearchResultsRouteImport } from './routes/search-results'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -31,6 +32,11 @@ const TermsRoute = TermsRouteImport.update({
 const SuccessRoute = SuccessRouteImport.update({
   id: '/success',
   path: '/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchResultsRoute = SearchResultsRouteImport.update({
+  id: '/search-results',
+  path: '/search-results',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterRoute = RegisterRouteImport.update({
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/search-results': typeof SearchResultsRoute
   '/success': typeof SuccessRoute
   '/terms': typeof TermsRoute
   '/hotels/$hotelId': typeof HotelsHotelIdRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/search-results': typeof SearchResultsRoute
   '/success': typeof SuccessRoute
   '/terms': typeof TermsRoute
   '/hotels/$hotelId': typeof HotelsHotelIdRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/search-results': typeof SearchResultsRoute
   '/success': typeof SuccessRoute
   '/terms': typeof TermsRoute
   '/hotels/$hotelId': typeof HotelsHotelIdRoute
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/register'
+    | '/search-results'
     | '/success'
     | '/terms'
     | '/hotels/$hotelId'
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/register'
+    | '/search-results'
     | '/success'
     | '/terms'
     | '/hotels/$hotelId'
@@ -176,6 +187,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/register'
+    | '/search-results'
     | '/success'
     | '/terms'
     | '/hotels/$hotelId'
@@ -192,6 +204,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  SearchResultsRoute: typeof SearchResultsRoute
   SuccessRoute: typeof SuccessRoute
   TermsRoute: typeof TermsRoute
   HotelsHotelIdRoute: typeof HotelsHotelIdRoute
@@ -213,6 +226,13 @@ declare module '@tanstack/react-router' {
       path: '/success'
       fullPath: '/success'
       preLoaderRoute: typeof SuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search-results': {
+      id: '/search-results'
+      path: '/search-results'
+      fullPath: '/search-results'
+      preLoaderRoute: typeof SearchResultsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register': {
@@ -304,6 +324,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  SearchResultsRoute: SearchResultsRoute,
   SuccessRoute: SuccessRoute,
   TermsRoute: TermsRoute,
   HotelsHotelIdRoute: HotelsHotelIdRoute,

@@ -43,7 +43,7 @@ function Home() {
         </div>
 
         {/* search overlapping */}
-        <div className="mx-auto -mt-24 max-w-6xl px-4 sm:px-6">
+        <div className="relative z-20 mx-auto -mt-24 max-w-6xl px-4 sm:px-6">
           <SearchBar />
         </div>
       </section>
