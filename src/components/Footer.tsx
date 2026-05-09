@@ -20,9 +20,9 @@ export function Footer() {
         <div>
           <h4 className="mb-3 text-sm font-semibold">{t("footer.company")}</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><Link to="/" className="hover:text-foreground">{t("footer.about")}</Link></li>
-            <li><Link to="/" className="hover:text-foreground">{t("footer.contact")}</Link></li>
-            <li><Link to="/" className="hover:text-foreground">{t("footer.terms")}</Link></li>
+            <li><Link to="/about" className="hover:text-foreground">{t("footer.about")}</Link></li>
+            <li><Link to="/contact" className="hover:text-foreground">{t("footer.contact")}</Link></li>
+            <li><Link to="/terms" className="hover:text-foreground">{t("footer.terms")}</Link></li>
           </ul>
         </div>
 

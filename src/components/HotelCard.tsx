@@ -6,7 +6,7 @@ import type { Hotel } from "@/lib/hotels";
 export function HotelCard({ hotel }: { hotel: Hotel }) {
   const { t } = useTranslation();
   const discount = hotel.oldPrice
-    ? Math.round(((hotel.oldPrice - hotel.price) / hotel.oldPrice) * 100)
+    ? Math.round(((hotel.oldPrice - (hotel.price || 0)) / hotel.oldPrice) * 100)
     : 0;
 
   return (

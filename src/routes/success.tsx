@@ -18,11 +18,21 @@ export const Route = createFileRoute("/success")({
   component: SuccessPage,
 });
 
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+
 function SuccessPage() {
   const { t } = useTranslation();
-  const { id } = Route.useSearch();
-  const { bookings } = useApp();
-  const booking = bookings.find((b) => b.id === id) ?? bookings[0];
+  const search = Route.useSearch();
+  const id = search.id || "";
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['booking', id],
+    queryFn: () => api.getBookingById(id),
+    enabled: !!id,
+  });
+
+  const booking = data?.booking || data;
 
   return (
     <div className="mx-auto max-w-2xl animate-fade-in px-4 py-12 sm:px-6">

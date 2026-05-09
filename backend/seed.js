@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Hotel = require('./models/Hotel');
 const Room = require('./models/Room');
 const Flight = require('./models/Flight');
+const User = require('./models/User');
 require('dotenv').config();
 
 const seedData = async () => {
@@ -12,6 +13,17 @@ const seedData = async () => {
     await Hotel.deleteMany({});
     await Room.deleteMany({});
     await Flight.deleteMany({});
+    await User.deleteMany({}); // Clear users too
+
+    // Create admin user
+    const adminUser = new User({
+      name: 'Admin User',
+      email: 'admin@stayly.com',
+      password: 'admin123',
+      role: 'admin'
+    });
+    await adminUser.save();
+    console.log('Admin user created: admin@stayly.com / admin123');
 
     // Seed hotels
     const hotels = [

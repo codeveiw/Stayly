@@ -24,6 +24,8 @@ export function Navbar() {
     { to: "/", label: t("nav.home") },
     { to: "/hotels", label: t("nav.hotels") },
     { to: "/flights", label: t("nav.flights") },
+    { to: "/about", label: t("about.title") },
+    { to: "/contact", label: t("contact.title") },
   ] as const;
 
   const onLogout = () => {
@@ -83,9 +85,9 @@ export function Navbar() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-2">
                   <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/15 text-xs font-semibold text-primary">
-                    {user.name.charAt(0).toUpperCase()}
+                    {(user.name || "U").charAt(0).toUpperCase()}
                   </span>
-                  <span className="hidden sm:inline">{user.name.split(" ")[0]}</span>
+                  <span className="hidden sm:inline">{(user.name || "User").split(" ")[0]}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

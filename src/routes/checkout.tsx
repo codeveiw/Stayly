@@ -5,6 +5,7 @@ import { useApp } from "@/contexts/AppContext";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { CreditCard, Lock, Loader2, Calendar, Users, MapPin } from "lucide-react";
+import { api } from "@/lib/api";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -28,7 +29,7 @@ const initialForm: FormState = { cardName: "", cardNumber: "", expiry: "", cvv: 
 function CheckoutPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user, pendingBooking, addBooking, setPendingBooking } = useApp();
+  const { user, pendingBooking, setPendingBooking } = useApp();
 
   const [form, setForm] = useState<FormState>(initialForm);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
@@ -81,10 +82,22 @@ function CheckoutPage() {
       toast.error(t("checkout.failed"));
       return;
     }
-    const booking = addBooking(pendingBooking);
-    setPendingBooking(null);
-    toast.success(t("checkout.success"));
-    navigate({ to: "/success", search: { id: booking.id } });
+    try {
+      const response = await api.createHotelBooking({
+        hotelId: pendingBooking.hotelId,
+        roomId: "1", // Default room selection until room selection is built
+        checkIn: pendingBooking.checkIn,
+        checkOut: pendingBooking.checkOut,
+        guests: pendingBooking.guests,
+      });
+
+      setPendingBooking(null);
+      toast.success(t("checkout.success"));
+      navigate({ to: "/success", search: { id: response.booking?.id || (response as any).id || "success" } });
+    } catch (error: any) {
+      setProcessing(false);
+      toast.error(error.message || t("checkout.failed"));
+    }
   };
 
   const update = (k: keyof FormState, v: string) =>
@@ -224,9 +237,8 @@ function Field({
         placeholder={placeholder}
         inputMode={inputMode}
         autoComplete={autoComplete}
-        className={`w-full rounded-lg border bg-background px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary ${
-          error ? "border-destructive" : "border-input"
-        }`}
+        className={`w-full rounded-lg border bg-background px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary ${error ? "border-destructive" : "border-input"
+          }`}
       />
       {error && <span className="mt-1 block text-xs text-destructive">{error}</span>}
     </label>

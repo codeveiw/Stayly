@@ -37,9 +37,6 @@ interface AppCtx {
   login: (email: string, password: string) => Promise<boolean>;
   register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
-  bookings: Booking[];
-  addBooking: (b: PendingBooking) => Booking;
-  cancelBooking: (id: string) => void;
   pendingBooking: PendingBooking | null;
   setPendingBooking: (b: PendingBooking | null) => void;
 }
@@ -51,7 +48,6 @@ const LS = {
   theme: "theme",
   user: "stayly:user",
   users: "stayly:users",
-  bookings: "stayly:bookings",
 };
 
 export function AppProvider({ children }: { children: ReactNode }) {
@@ -59,7 +55,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     typeof window !== "undefined" ? ((localStorage.getItem(LS.lang) as Lang) || "en") : "en"
   );
   const [theme, setTheme] = useState<Theme>(() =>
-    typeof window !== "undefined" ?((localStorage.getItem(LS.theme) as Theme) || "light") : "light"
+    typeof window !== "undefined" ? ((localStorage.getItem(LS.theme) as Theme) || "light") : "light"
   );
   const [user, setUser] = useState<User | null>(() => {
     if (typeof window === "undefined") return null;
@@ -67,11 +63,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return raw ? (JSON.parse(raw) as User) : null;
   });
   const [pendingBooking, setPendingBooking] = useState<PendingBooking | null>(null);
-  const [bookings, setBookings] = useState<Booking[]>(() => {
-    if (typeof window === "undefined") return [];
-    const raw = localStorage.getItem(LS.bookings);
-    return raw ? (JSON.parse(raw) as Booking[]) : [];
-  });
 
   // Apply lang/dir
   useEffect(() => {
@@ -146,23 +137,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
-  const addBooking: AppCtx["addBooking"] = (b) => {
-    const booking: Booking = {
-      ...b,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-      status: "confirmed",
-    };
-    setBookings((prev) => [booking, ...prev]);
-    return booking;
-  };
-
-  const cancelBooking = (id: string) =>
-    setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: "cancelled" } : b)));
-
   const value = useMemo<AppCtx>(
-    () => ({ lang, setLang, theme, toggleTheme, user, login, register, logout, bookings, addBooking, cancelBooking, pendingBooking, setPendingBooking }),
-    [lang, theme, user, bookings, pendingBooking]
+    () => ({ lang, setLang, theme, toggleTheme, user, login, register, logout, pendingBooking, setPendingBooking }),
+    [lang, theme, user, pendingBooking]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

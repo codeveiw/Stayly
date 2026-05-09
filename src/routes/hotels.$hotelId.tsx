@@ -52,8 +52,8 @@ function HotelDetail() {
     return <div className="p-12 text-center">Hotel not found. <Link to="/hotels" className="text-primary underline">Browse</Link></div>;
   }
 
-  const { hotel, rooms } = hotelData;
-  const total = nights * hotel.price;
+  const { hotel, rooms, reviews = [] } = hotelData;
+  const total = nights * (hotel.price || 0);
 
   const onBook = () => {
     if (!user) {
@@ -96,12 +96,12 @@ function HotelDetail() {
       {/* GALLERY */}
       <div className="grid gap-2 overflow-hidden rounded-2xl md:grid-cols-[2fr_1fr]">
         <img
-          src={hotel.gallery[activeImg]}
+          src={hotel.images[activeImg]}
           alt={hotel.name}
           className="h-[280px] w-full object-cover sm:h-[460px]"
         />
         <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-1">
-          {hotel.gallery.slice(0, 4).map((g: string, i: number) => (
+          {hotel.images.slice(0, 4).map((g: string, i: number) => (
             <button
               key={i}
               type="button"
@@ -141,7 +141,7 @@ function HotelDetail() {
               {t("hotel.reviews", { count: hotel.reviewsCount })}
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
-              {hotel.reviews.map((r: { author: string; rating: number; text: string }, i: number) => (
+              {reviews.map((r: { author: string; rating: number; text: string }, i: number) => (
                 <div key={i} className="rounded-xl border border-border bg-card p-4 shadow-soft">
                   <div className="mb-1 flex items-center justify-between">
                     <span className="font-semibold">{r.author}</span>

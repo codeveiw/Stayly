@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { useApp } from "@/contexts/AppContext";
@@ -21,11 +21,22 @@ const schema = z.object({
 
 function LoginPage() {
   const { t } = useTranslation();
-  const { login } = useApp();
+  const { login, user } = useApp();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      if (user.role === 'admin') {
+        navigate({ to: "/admin-dashboard" });
+      } else {
+        navigate({ to: "/" });
+      }
+    }
+  }, [user, navigate]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,16 +48,19 @@ function LoginPage() {
       return;
     }
     setErrors({});
+    setLoading(true);
     try {
       const ok = await login(email, password);
       if (!ok) {
         toast.error(t("auth.invalid"));
+        setLoading(false);
         return;
       }
       toast.success(t("auth.loggedIn", { name: email.split("@")[0] }));
-      navigate({ to: "/" });
+      // Navigation will happen in useEffect
     } catch (error) {
       toast.error(t("auth.invalid"));
+      setLoading(false);
     }
   };
 
@@ -61,7 +75,7 @@ function LoginPage() {
         <Field label={t("auth.password")} error={errors.password}>
           <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
         </Field>
-        <Button type="submit" size="lg" className="w-full">{t("auth.submitLogin")}</Button>
+        <Button type="submit" size="lg" className="w-full" disabled={loading}>{t("auth.submitLogin")}</Button>
       </form>
       <p className="mt-4 text-center text-sm text-muted-foreground">
         <Link to="/register" className="text-primary hover:underline">{t("auth.toRegister")}</Link>

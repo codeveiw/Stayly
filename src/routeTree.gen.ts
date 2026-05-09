@@ -9,16 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SuccessRouteImport } from './routes/success'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as AdminDashboardRouteImport } from './routes/admin-dashboard'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HotelsIndexRouteImport } from './routes/hotels.index'
 import { Route as FlightsIndexRouteImport } from './routes/flights.index'
 import { Route as HotelsHotelIdRouteImport } from './routes/hotels.$hotelId'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SuccessRoute = SuccessRouteImport.update({
   id: '/success',
   path: '/success',
@@ -39,9 +48,24 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/admin-dashboard',
+  path: '/admin-dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -67,22 +91,30 @@ const HotelsHotelIdRoute = HotelsHotelIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/admin-dashboard': typeof AdminDashboardRoute
   '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/success': typeof SuccessRoute
+  '/terms': typeof TermsRoute
   '/hotels/$hotelId': typeof HotelsHotelIdRoute
   '/flights/': typeof FlightsIndexRoute
   '/hotels/': typeof HotelsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/admin-dashboard': typeof AdminDashboardRoute
   '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/success': typeof SuccessRoute
+  '/terms': typeof TermsRoute
   '/hotels/$hotelId': typeof HotelsHotelIdRoute
   '/flights': typeof FlightsIndexRoute
   '/hotels': typeof HotelsIndexRoute
@@ -90,11 +122,15 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/admin-dashboard': typeof AdminDashboardRoute
   '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/success': typeof SuccessRoute
+  '/terms': typeof TermsRoute
   '/hotels/$hotelId': typeof HotelsHotelIdRoute
   '/flights/': typeof FlightsIndexRoute
   '/hotels/': typeof HotelsIndexRoute
@@ -103,33 +139,45 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
+    | '/admin-dashboard'
     | '/checkout'
+    | '/contact'
     | '/dashboard'
     | '/login'
     | '/register'
     | '/success'
+    | '/terms'
     | '/hotels/$hotelId'
     | '/flights/'
     | '/hotels/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
+    | '/admin-dashboard'
     | '/checkout'
+    | '/contact'
     | '/dashboard'
     | '/login'
     | '/register'
     | '/success'
+    | '/terms'
     | '/hotels/$hotelId'
     | '/flights'
     | '/hotels'
   id:
     | '__root__'
     | '/'
+    | '/about'
+    | '/admin-dashboard'
     | '/checkout'
+    | '/contact'
     | '/dashboard'
     | '/login'
     | '/register'
     | '/success'
+    | '/terms'
     | '/hotels/$hotelId'
     | '/flights/'
     | '/hotels/'
@@ -137,11 +185,15 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
   CheckoutRoute: typeof CheckoutRoute
+  ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
   SuccessRoute: typeof SuccessRoute
+  TermsRoute: typeof TermsRoute
   HotelsHotelIdRoute: typeof HotelsHotelIdRoute
   FlightsIndexRoute: typeof FlightsIndexRoute
   HotelsIndexRoute: typeof HotelsIndexRoute
@@ -149,6 +201,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/success': {
       id: '/success'
       path: '/success'
@@ -177,11 +236,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout': {
       id: '/checkout'
       path: '/checkout'
       fullPath: '/checkout'
       preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-dashboard': {
+      id: '/admin-dashboard'
+      path: '/admin-dashboard'
+      fullPath: '/admin-dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -217,11 +297,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
   CheckoutRoute: CheckoutRoute,
+  ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
   SuccessRoute: SuccessRoute,
+  TermsRoute: TermsRoute,
   HotelsHotelIdRoute: HotelsHotelIdRoute,
   FlightsIndexRoute: FlightsIndexRoute,
   HotelsIndexRoute: HotelsIndexRoute,

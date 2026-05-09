@@ -5,6 +5,9 @@ import { useApp } from "@/contexts/AppContext";
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { type Booking } from "@/contexts/AppContext";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "My bookings — Stayly" }] }),
@@ -13,18 +16,35 @@ export const Route = createFileRoute("/dashboard")({
 
 function Dashboard() {
   const { t } = useTranslation();
-  const { user, bookings, cancelBooking } = useApp();
+  const { user } = useApp();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!user) navigate({ to: "/login" });
   }, [user, navigate]);
 
-  if (!user) return null;
+  const { data: bookings = [], isLoading } = useQuery<Booking[]>({
+    queryKey: ['bookings'],
+    queryFn: () => api.getBookings(),
+    enabled: !!user,
+  });
+
+  const cancelMutation = useMutation({
+    mutationFn: (id: string) => api.cancelBooking(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      toast.success(t("booking.cancelled"));
+    },
+    onError: () => {
+      toast.error(t("Something went wrong"));
+    }
+  });
+
+  if (!user || isLoading) return null;
 
   const onCancel = (id: string) => {
-    cancelBooking(id);
-    toast.success(t("booking.cancelled"));
+    cancelMutation.mutate(id);
   };
 
   return (
@@ -56,11 +76,10 @@ function Dashboard() {
                 <div className="flex items-center gap-2">
                   <h3 className="font-display text-lg font-semibold">{b.hotelName}</h3>
                   <span
-                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
-                      b.status === "confirmed"
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${b.status === "confirmed"
                         ? "bg-success/15 text-success"
                         : "bg-destructive/15 text-destructive"
-                    }`}
+                      }`}
                   >
                     {b.status === "confirmed" ? t("booking.confirmedTag") : t("booking.cancelledTag")}
                   </span>
