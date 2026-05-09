@@ -233,6 +233,17 @@ const resources = {
         section8: "Governing Law",
         section8Text: "These terms and conditions are governed by and construed in accordance with the laws of the United States, and you irrevocably submit to the exclusive jurisdiction of the courts in that location.",
       },
+      flights: {
+        title: "Find Your Perfect Flight",
+        subtitle: "Find and book the perfect flight for your journey",
+        searchFlights: "Search Flights",
+        flightResults: "Flight Results",
+        bookNow: "Book Now",
+        from: "From",
+        to: "To",
+        date: "Date",
+        passengers: "Passengers"
+      },
     },
   },
   ar: {
@@ -465,6 +476,17 @@ const resources = {
         section7Text: "قد تراجع ستايلي شروط الخدمة في أي وقت دون إخطار. باستخدام هذا الموقع، أنت توافق على الالتزام بنسخة الشروط الحالية.",
         section8: "القانون الحاكم",
         section8Text: "تحكم هذه الشروط والأحكام بموجب قوانين الولايات المتحدة الأمريكية.",
+      },
+      flights: {
+        title: "ابحث عن رحلتك المثالية",
+        subtitle: "ابحث واحجز الرحلة المثالية لرحلتك",
+        searchFlights: "البحث عن رحلات",
+        flightResults: "نتائج الرحلات",
+        bookNow: "احجز الآن",
+        from: "من",
+        to: "إلى",
+        date: "التاريخ",
+        passengers: "المسافرون"
       },
     },
   },

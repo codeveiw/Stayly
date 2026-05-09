@@ -23,7 +23,41 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
 
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [apiSuggestions, setApiSuggestions] = useState<any[]>([]);
+  const [isSearchingAPI, setIsSearchingAPI] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!destination.trim()) {
+      setApiSuggestions([]);
+      setIsSearchingAPI(false);
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
+      setIsSearchingAPI(true);
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+            destination
+          )}&format=json&addressdetails=1&limit=5`,
+          {
+            headers: {
+              "Accept-Language": "en",
+            },
+          }
+        );
+        const data = await res.json();
+        setApiSuggestions(data);
+      } catch (err) {
+        console.error("Failed to fetch suggestions", err);
+      } finally {
+        setIsSearchingAPI(false);
+      }
+    }, 400);
+
+    return () => clearTimeout(timeoutId);
+  }, [destination]);
 
   useEffect(() => {
     const saved = localStorage.getItem("recent_searches");
@@ -117,25 +151,57 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
               className="w-full bg-transparent text-sm font-medium outline-none placeholder:text-muted-foreground/70"
             />
           </Field>
-          {showSuggestions && recentSearches.length > 0 && (
-            <div className="absolute top-full left-0 z-50 mt-1 w-full rounded-md border bg-popover shadow-md">
-              <div className="px-3 py-2 text-xs font-semibold text-muted-foreground">Recent Searches</div>
-              <ul>
-                {recentSearches.map((s, i) => (
-                  <li key={i}>
-                    <button
-                      type="button"
-                      className="w-full px-3 py-2 text-left text-sm hover:bg-accent"
-                      onClick={() => {
-                        setDestination(s);
-                        setShowSuggestions(false);
-                      }}
-                    >
-                      {s}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+          {showSuggestions && (recentSearches.length > 0 || apiSuggestions.length > 0 || isSearchingAPI) && (
+            <div className="absolute top-full left-0 z-50 mt-1 w-full max-h-64 overflow-y-auto rounded-md border bg-popover shadow-md">
+              {isSearchingAPI && (
+                <div className="px-3 py-4 text-xs flex items-center justify-center text-muted-foreground">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Searching places...
+                </div>
+              )}
+              {!isSearchingAPI && apiSuggestions.length > 0 && (
+                <>
+                  <div className="px-3 py-2 text-xs font-semibold text-muted-foreground">Places match</div>
+                  <ul>
+                    {apiSuggestions.map((s, i) => (
+                      <li key={i}>
+                        <button
+                          type="button"
+                          className="flex w-full items-start gap-2 px-3 py-2 text-left text-sm hover:bg-accent"
+                          onClick={() => {
+                            setDestination(s.display_name);
+                            setShowSuggestions(false);
+                          }}
+                        >
+                          <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                          <span className="line-clamp-2">{s.display_name}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              {!isSearchingAPI && apiSuggestions.length === 0 && recentSearches.length > 0 && (
+                <>
+                  <div className="px-3 py-2 text-xs font-semibold text-muted-foreground">Recent Searches</div>
+                  <ul>
+                    {recentSearches.map((s, i) => (
+                      <li key={i}>
+                        <button
+                          type="button"
+                          className="w-full px-3 py-2 text-left text-sm hover:bg-accent"
+                          onClick={() => {
+                            setDestination(s);
+                            setShowSuggestions(false);
+                          }}
+                        >
+                          {s}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </div>
           )}
         </div>

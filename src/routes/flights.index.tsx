@@ -1,13 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { searchFlights, type Flight } from "@/lib/flights";
+import { searchAmadeusFlights } from "@/services/flightService";
+import type { Flight } from "@/lib/flights";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plane, MapPin, Clock, DollarSign } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { Plane, MapPin, Clock, Loader2, AlertCircle } from "lucide-react";
 
 export const Route = createFileRoute("/flights/")({
   component: FlightsPage,
@@ -20,16 +20,33 @@ function FlightsPage() {
   const [date, setDate] = useState("");
   const [passengers, setPassengers] = useState(1);
   const [searched, setSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [flights, setFlights] = useState<Flight[]>([]);
 
-  const { data: flights = [], refetch, isLoading } = useQuery({
-    queryKey: ['flights', departure, destination, date, passengers],
-    queryFn: () => searchFlights({ departure, destination, date, passengers: passengers }),
-    enabled: false
-  });
-
-  const handleSearch = () => {
+  const handleSearch = async () => {
+    if (!departure || !destination || !date) {
+      setError("Please fill in departure, destination, and date.");
+      return;
+    }
     setSearched(true);
-    refetch();
+    setLoading(true);
+    setError(null);
+    setFlights([]);
+
+    try {
+      const results = await searchAmadeusFlights({
+        origin: departure.toUpperCase(),
+        destination: destination.toUpperCase(),
+        departureDate: date,
+        adults: passengers,
+      });
+      setFlights(results);
+    } catch (err: any) {
+      setError(err.message || "An error occurred while searching for flights.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -37,40 +54,44 @@ function FlightsPage() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-            {t("flights.title")}
+            {t("flights.title", "Find Your Perfect Flight")}
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            Find and book the perfect flight for your journey
+            {t("flights.subtitle", "Find and book the perfect flight for your journey")}
           </p>
         </div>
 
         {/* Search Form */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Search Flights</CardTitle>
+            <CardTitle>{t("flights.searchFlights", "Search Flights")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
               <div>
-                <Label htmlFor="departure">From</Label>
+                <Label htmlFor="departure">{t("flights.from", "From")}</Label>
                 <Input
                   id="departure"
-                  placeholder="Departure city"
+                  placeholder="IATA Code (e.g. JFK)"
                   value={departure}
                   onChange={(e) => setDeparture(e.target.value)}
+                  maxLength={3}
+                  className="uppercase"
                 />
               </div>
               <div>
-                <Label htmlFor="destination">To</Label>
+                <Label htmlFor="destination">{t("flights.to", "To")}</Label>
                 <Input
                   id="destination"
-                  placeholder="Destination city"
+                  placeholder="IATA Code (e.g. LHR)"
                   value={destination}
                   onChange={(e) => setDestination(e.target.value)}
+                  maxLength={3}
+                  className="uppercase"
                 />
               </div>
               <div>
-                <Label htmlFor="date">Date</Label>
+                <Label htmlFor="date">{t("flights.date", "Date")}</Label>
                 <Input
                   id="date"
                   type="date"
@@ -79,7 +100,7 @@ function FlightsPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="passengers">Passengers</Label>
+                <Label htmlFor="passengers">{t("flights.passengers", "Passengers")}</Label>
                 <Input
                   id="passengers"
                   type="number"
@@ -90,22 +111,31 @@ function FlightsPage() {
                 />
               </div>
               <div className="flex items-end">
-                <Button onClick={handleSearch} className="w-full">
-                  Search Flights
+                <Button onClick={handleSearch} className="w-full" disabled={loading}>
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("flights.searchFlights", "Search Flights")}
                 </Button>
               </div>
             </div>
+            {error && (
+              <div className="text-destructive text-sm mt-4 flex items-center gap-2">
+                <AlertCircle className="h-4 w-4" />
+                {error}
+              </div>
+            )}
           </CardContent>
         </Card>
 
         {/* Results */}
         {searched && (
           <div>
-            <h2 className="text-2xl font-bold mb-6">Flight Results</h2>
-            {isLoading ? (
-              <div className="text-center py-12">Loading flights...</div>
-            ) : flights.length === 0 ? (
-              <div className="text-center py-12">No flights found</div>
+            <h2 className="text-2xl font-bold mb-6">{t("flights.flightResults", "Flight Results")}</h2>
+            {loading ? (
+              <div className="text-center py-12 flex flex-col items-center gap-4 text-muted-foreground">
+                <Loader2 className="h-8 w-8 animate-spin" />
+                Loading flights...
+              </div>
+            ) : flights.length === 0 && !error ? (
+              <div className="text-center py-12 text-muted-foreground">No flights found</div>
             ) : (
               <div className="grid gap-6">
                 {flights.map((flight) => (
@@ -121,6 +151,9 @@ function FlightsPage() {
 }
 
 function FlightCard({ flight }: { flight: Flight }) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
   const departureTime = new Date(flight.departure.time).toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit'
@@ -129,6 +162,14 @@ function FlightCard({ flight }: { flight: Flight }) {
     hour: '2-digit',
     minute: '2-digit'
   });
+
+  const onBookNow = () => {
+    navigate({
+      to: "/booking/flight/$id",
+      params: { id: flight.id },
+      state: { flight }
+    });
+  };
 
   return (
     <Card className="hover:shadow-lg transition-shadow">
@@ -142,12 +183,12 @@ function FlightCard({ flight }: { flight: Flight }) {
             <span className="text-sm text-muted-foreground">{flight.flightNumber}</span>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold text-primary">${flight.price}</div>
+            <div className="text-2xl font-bold text-primary">${flight.price.toFixed(2)}</div>
             <div className="text-sm text-muted-foreground">per person</div>
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-8">
             <div>
               <div className="text-lg font-semibold">{departureTime}</div>
@@ -175,7 +216,7 @@ function FlightCard({ flight }: { flight: Flight }) {
             </div>
           </div>
 
-          <Button>Book Now</Button>
+          <Button onClick={onBookNow}>{t("flights.bookNow", "Book Now")}</Button>
         </div>
       </CardContent>
     </Card>

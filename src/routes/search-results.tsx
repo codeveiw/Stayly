@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { hotelService } from "@/services/hotelService";
+import { api } from "@/lib/api";
 import { HotelCard } from "@/components/HotelCard";
 
 interface SearchParams {
@@ -36,7 +36,7 @@ function SearchResultsPage() {
             try {
                 setLoading(true);
                 setError(null);
-                const data = await hotelService.searchHotels(searchParams);
+                const data = await api.getHotels({ q: searchParams.destination });
                 if (active) {
                     setHotels(data);
                 }

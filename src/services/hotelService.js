@@ -9,7 +9,7 @@ export const hotelService = {
             if (params.children) queryParams.append('children', params.children.toString());
             if (params.rooms) queryParams.append('rooms', params.rooms.toString());
 
-            const response = await fetch(`http://localhost:5000/api/hotels/search?${queryParams.toString()}`);
+            const response = await fetch(`/api/hotels/search?${queryParams.toString()}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch hotels');
             }

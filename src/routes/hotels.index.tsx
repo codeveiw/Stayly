@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getHotels, type AmenityKey } from "@/lib/hotels";
+import { type AmenityKey, type Hotel } from "@/lib/hotels";
+import { api } from "@/lib/api";
 import { HotelCard } from "@/components/HotelCard";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -43,19 +44,21 @@ function HotelsList() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
 
-  const [priceRange, setPriceRange] = useState<[number, number]>([100, 700]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([50, 1000]);
   const [minRating, setMinRating] = useState(0);
   const [selected, setSelected] = useState<AmenityKey[]>([]);
   const [openMobile, setOpenMobile] = useState(false);
 
   const { data: hotels = [], isLoading } = useQuery({
     queryKey: ['hotels', search.q],
-    queryFn: () => getHotels({ q: search.q })
+    queryFn: () => api.getHotels({ q: search.q })
   });
 
   const filtered = useMemo(() => {
-    let list = hotels.filter((h) => {
+    let list = hotels.filter((h: Hotel) => {
       if (h.rating < minRating) return false;
+      const p = h.price || 0;
+      if (p < priceRange[0] || p > priceRange[1]) return false;
       if (selected.length && !selected.every((a) => h.amenities.includes(a))) return false;
       return true;
     });
@@ -69,7 +72,7 @@ function HotelsList() {
     setSelected((prev) => (prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a]));
 
   const clearAll = () => {
-    setPriceRange([100, 700]);
+    setPriceRange([50, 1000]);
     setMinRating(0);
     setSelected([]);
   };
@@ -88,7 +91,7 @@ function HotelsList() {
         <Slider
           value={priceRange}
           min={50}
-          max={800}
+          max={1000}
           step={10}
           onValueChange={(v) => setPriceRange([v[0], v[1]] as [number, number])}
         />
@@ -106,11 +109,10 @@ function HotelsList() {
               key={r}
               type="button"
               onClick={() => setMinRating(r)}
-              className={`flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                minRating === r
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border hover:bg-muted"
-              }`}
+              className={`flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${minRating === r
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border hover:bg-muted"
+                }`}
             >
               <Star className="h-3 w-3" /> {r === 0 ? "Any" : `${r}+`}
             </button>
@@ -173,7 +175,7 @@ function HotelsList() {
       <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
         <div className={`${openMobile ? "block" : "hidden"} lg:block`}>{FiltersPanel}</div>
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((h) => (
+          {filtered.map((h: Hotel) => (
             <HotelCard key={h.id} hotel={h} />
           ))}
           {filtered.length === 0 && (

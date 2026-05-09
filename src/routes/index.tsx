@@ -37,7 +37,6 @@ function Home() {
             <h1 className="max-w-3xl font-display text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">
               {t("hero.title")}
             </h1>
-            // eslint-disable-next-line prettier/prettier
             <p className="mt-4 max-w-xl text-base text-white/85 md:text-lg">{t("hero.subtitle")}</p>
           </div>
         </div>

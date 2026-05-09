@@ -35,18 +35,18 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Stayly — Book unique places to stay" },
+      { title: "stayly" },
       {
         name: "description",
         content:
           "Discover handpicked hotels, boutique stays and beachfront resorts at the best price on Stayly.",
       },
-      { property: "og:title", content: "Stayly — Book unique places to stay" },
+      { property: "og:title", content: "stayly" },
       { property: "og:type", content: "website" },
-      { name: "twitter:title", content: "Stayly — Book unique places to stay" },
-      { name: "description", content: "Wanderlust Hub is a modern hotel booking web application for discovering and reserving accommodations." },
-      { property: "og:description", content: "Wanderlust Hub is a modern hotel booking web application for discovering and reserving accommodations." },
-      { name: "twitter:description", content: "Wanderlust Hub is a modern hotel booking web application for discovering and reserving accommodations." },
+      { name: "twitter:title", content: "stayly" },
+      { name: "description", content: "Stayly is a modern hotel booking web application for discovering and reserving accommodations." },
+      { property: "og:description", content: "Stayly is a modern hotel booking web application for discovering and reserving accommodations." },
+      { name: "twitter:description", content: "Stayly is a modern hotel booking web application for discovering and reserving accommodations." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b93ff7b6-99e8-4acf-9323-b52c893541b4/id-preview-023dafb6--41c27b2b-98f9-4900-aa38-290dccc211d8.lovable.app-1777117443185.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b93ff7b6-99e8-4acf-9323-b52c893541b4/id-preview-023dafb6--41c27b2b-98f9-4900-aa38-290dccc211d8.lovable.app-1777117443185.png" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -84,14 +84,14 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AppProvider>
-      <div className="flex min-h-screen flex-col">
-        <Navbar />
-        <main className="flex-1">
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
-      <Toaster position="top-center" richColors />
+        <div className="flex min-h-screen flex-col">
+          <Navbar />
+          <main className="flex-1">
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
+        <Toaster position="top-center" richColors />
       </AppProvider>
     </QueryClientProvider>
   );

@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate, notFound } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getHotelById } from "@/lib/hotels";
+import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Star, MapPin, Wifi, Waves, Coffee, Car, Dumbbell, Sparkles, Wine, Snowflake, Calendar, Users } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
@@ -29,7 +29,7 @@ function HotelDetail() {
 
   const { data: hotelData, isLoading } = useQuery({
     queryKey: ['hotel', hotelId],
-    queryFn: () => getHotelById(hotelId),
+    queryFn: () => api.getHotelById(hotelId),
   });
 
   const today = new Date().toISOString().slice(0, 10);

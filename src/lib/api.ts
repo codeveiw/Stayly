@@ -24,6 +24,19 @@ class ApiClient {
     }
     if (!localStorage.getItem('mockHotels')) {
       localStorage.setItem('mockHotels', JSON.stringify(hotels));
+    } else {
+      // Migration: Remove Nile View Paradise (id 4) and ensure Paris, Dubai, Tokyo, Santorini (ids 5,6,7,8) exist
+      let savedHotels = JSON.parse(localStorage.getItem('mockHotels') || '[]');
+
+      savedHotels = savedHotels.filter((h: any) => h.id !== '4');
+
+      const missingHotels = hotels.filter(h => ['5', '6', '7', '8'].includes(h.id));
+      for (const missing of missingHotels) {
+        if (!savedHotels.find((h: any) => h.id === missing.id)) {
+          savedHotels.push(missing);
+        }
+      }
+      localStorage.setItem('mockHotels', JSON.stringify(savedHotels));
     }
   }
 
@@ -75,7 +88,17 @@ class ApiClient {
   // Hotel methods
   async getHotels(params?: any) {
     await delay(300);
-    return JSON.parse(localStorage.getItem('mockHotels') || '[]');
+    const hotels = JSON.parse(localStorage.getItem('mockHotels') || '[]');
+    let filtered = hotels;
+    if (params?.q) {
+      const q = params.q.toLowerCase().trim();
+      filtered = hotels.filter((h: any) =>
+        (h.name && h.name.toLowerCase().includes(q)) ||
+        (h.city && h.city.toLowerCase().includes(q)) ||
+        (h.country && h.country.toLowerCase().includes(q))
+      );
+    }
+    return filtered;
   }
 
   async getHotelById(id: string) {
