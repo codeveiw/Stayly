@@ -30,17 +30,12 @@ function ContactPage() {
             </p>
           </div>
 
-          <div className="grid gap-8 lg:grid-cols-3 lg:gap-12">
+          <div className="mx-auto">
 
-            {/* Contact Details */}
-            <div className="space-y-6 lg:col-span-1">
-              <ContactCard icon={<Phone />} title={t("contact.phone")} detail="+1 (800) 123-4567" sub={t("contact.hoursText")} />
-              <ContactCard icon={<Mail />} title={t("contact.contactEmail")} detail="support@stayly.com" sub={t("contact.subtitle")} />
-              <ContactCard icon={<MapPin />} title={t("contact.address")} detail="123 Travel Avenue" sub="Suite 400, New York, NY 10001" />
-            </div>
+          
 
             {/* Contact Form */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 ">
               <div className="rounded-3xl border border-border bg-card p-8 sm:p-10 shadow-elegant">
                 <h2 className="font-display text-2xl font-bold mb-6">{t("contact.form")}</h2>
                 <form onSubmit={onSubmit} className="space-y-6">

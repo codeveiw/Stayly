@@ -4,7 +4,9 @@ import { Star, MapPin } from "lucide-react";
 import type { Hotel } from "@/lib/hotels";
 
 export function HotelCard({ hotel }: { hotel: Hotel }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isAr = i18n.language === 'ar';
+
   const discount = hotel.oldPrice
     ? Math.round(((hotel.oldPrice - (hotel.price || 0)) / hotel.oldPrice) * 100)
     : 0;
@@ -18,7 +20,7 @@ export function HotelCard({ hotel }: { hotel: Hotel }) {
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
           src={hotel.image}
-          alt={hotel.name}
+          alt={isAr && hotel.name_ar ? hotel.name_ar : hotel.name}
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
@@ -33,9 +35,9 @@ export function HotelCard({ hotel }: { hotel: Hotel }) {
         </span>
       </div>
       <div className="p-4">
-        <h3 className="truncate font-display text-lg font-semibold">{hotel.name}</h3>
+        <h3 className="truncate font-display text-lg font-semibold">{isAr && hotel.name_ar ? hotel.name_ar : hotel.name}</h3>
         <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
-          <MapPin className="h-3.5 w-3.5" /> {hotel.city}, {hotel.country}
+          <MapPin className="h-3.5 w-3.5" /> {(isAr && hotel.city_ar) ? hotel.city_ar : hotel.city}, {(isAr && hotel.country_ar) ? hotel.country_ar : hotel.country}
         </p>
         <div className="mt-3 flex items-end justify-between">
           <div>

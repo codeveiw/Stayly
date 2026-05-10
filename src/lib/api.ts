@@ -40,6 +40,12 @@ class ApiClient {
           // Force fix images if they were broken in localStorage
           existing.image = defaultHotel.image;
           existing.images = defaultHotel.images;
+          // Sync translation fields
+          existing.name_ar = defaultHotel.name_ar;
+          existing.city_ar = defaultHotel.city_ar;
+          existing.country_ar = defaultHotel.country_ar;
+          existing.description_ar = defaultHotel.description_ar;
+          existing.address_ar = defaultHotel.address_ar;
         }
       }
 

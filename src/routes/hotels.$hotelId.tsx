@@ -23,7 +23,8 @@ const AMENITY_ICONS = {
 
 function HotelDetail() {
   const { hotelId } = Route.useParams();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isAr = i18n.language === 'ar';
   const { user, setPendingBooking } = useApp();
   const navigate = useNavigate();
 
@@ -63,7 +64,7 @@ function HotelDetail() {
     }
     setPendingBooking({
       hotelId: hotel.id,
-      hotelName: hotel.name,
+      hotelName: isAr && hotel.name_ar ? hotel.name_ar : hotel.name,
       hotelImage: hotel.image,
       checkIn, checkOut, guests, nights, total,
     });
@@ -75,14 +76,14 @@ function HotelDetail() {
       <div className="mb-2 text-sm text-muted-foreground">
         <Link to="/hotels" className="hover:text-foreground">{t("nav.hotels")}</Link>
         <span className="mx-2">/</span>
-        <span>{hotel.name}</span>
+        <span>{isAr && hotel.name_ar ? hotel.name_ar : hotel.name}</span>
       </div>
 
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-bold sm:text-4xl">{hotel.name}</h1>
+          <h1 className="font-display text-3xl font-bold sm:text-4xl">{isAr && hotel.name_ar ? hotel.name_ar : hotel.name}</h1>
           <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
-            <MapPin className="h-4 w-4" /> {hotel.city}, {hotel.country}
+            <MapPin className="h-4 w-4" /> {(isAr && hotel.city_ar) ? hotel.city_ar : hotel.city}, {(isAr && hotel.country_ar) ? hotel.country_ar : hotel.country}
           </p>
         </div>
         <div className="flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-sm font-semibold text-primary">
@@ -97,7 +98,7 @@ function HotelDetail() {
       <div className="grid gap-2 overflow-hidden rounded-2xl md:grid-cols-[2fr_1fr]">
         <img
           src={hotel.images[activeImg]}
-          alt={hotel.name}
+          alt={isAr && hotel.name_ar ? hotel.name_ar : hotel.name}
           className="h-[280px] w-full object-cover sm:h-[460px]"
         />
         <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-1">
@@ -108,7 +109,7 @@ function HotelDetail() {
               onClick={() => setActiveImg(i)}
               className={`overflow-hidden rounded-xl ${activeImg === i ? "ring-2 ring-primary" : ""}`}
             >
-              <img src={g} alt={`${hotel.name} ${i + 1}`} className="h-28 w-full object-cover transition-transform hover:scale-105 sm:h-full" loading="lazy" />
+              <img src={g} alt={`${isAr && hotel.name_ar ? hotel.name_ar : hotel.name} ${i + 1}`} className="h-28 w-full object-cover transition-transform hover:scale-105 sm:h-full" loading="lazy" />
             </button>
           ))}
         </div>
@@ -118,7 +119,7 @@ function HotelDetail() {
         <div>
           <section className="mb-8">
             <h2 className="mb-3 font-display text-xl font-semibold">{t("hotel.description")}</h2>
-            <p className="leading-relaxed text-muted-foreground">{hotel.description}</p>
+            <p className="leading-relaxed text-muted-foreground">{isAr && hotel.description_ar ? hotel.description_ar : hotel.description}</p>
           </section>
 
           <section className="mb-8">
