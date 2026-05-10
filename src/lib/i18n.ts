@@ -233,6 +233,10 @@ const resources = {
         section7Text: "Stayly may revise these terms of service for its web site at any time without notice. By using this web site, you are agreeing to be bound by the then current version of these terms of service.",
         section8: "Governing Law",
         section8Text: "These terms and conditions are governed by and construed in accordance with the laws of the United States, and you irrevocably submit to the exclusive jurisdiction of the courts in that location.",
+        governance: "Legal Governance",
+        privacy: "Privacy Maintained",
+        version: "Version 2.1",
+        clarification: "Need clarification? If you have any questions about these Terms, please contact us."
       },
       flights: {
         title: "Find Your Perfect Flight",
@@ -478,6 +482,10 @@ const resources = {
         section7Text: "قد تراجع ستايلي شروط الخدمة في أي وقت دون إخطار. باستخدام هذا الموقع، أنت توافق على الالتزام بنسخة الشروط الحالية.",
         section8: "القانون الحاكم",
         section8Text: "تحكم هذه الشروط والأحكام بموجب قوانين الولايات المتحدة الأمريكية.",
+        governance: "حوكمة قانونية",
+        privacy: "يحافظ على الخصوصية",
+        version: "الإصدار ٢.١",
+        clarification: "هل تحتاج إلى توضيح؟ إذا كان لديك أي أسئلة حول هذه الشروط، يرجى التواصل معنا."
       },
       flights: {
         title: "ابحث عن رحلتك المثالية",

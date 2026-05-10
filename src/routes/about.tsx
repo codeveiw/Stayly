@@ -19,10 +19,10 @@ function AboutPage() {
         </div>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center text-balance">
           <h1 className="font-display text-5xl font-extrabold tracking-tight sm:text-7xl">
-            Redefining the <span className="bg-gradient-primary bg-clip-text text-transparent">Travel</span> Experience
+            {t("about.hero")}
           </h1>
           <p className="mt-6 text-lg leading-8 text-muted-foreground sm:text-xl max-w-2xl mx-auto">
-            Stayly is a modern booking platform engineered to eliminate friction from travel. We connect explorers with world-class stays effortlessly and securely.
+            {t("about.heroSub")}
           </p>
         </div>
       </section>
@@ -31,14 +31,14 @@ function AboutPage() {
       <section className="py-24 bg-card">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="text-center mb-16">
-            <h2 className="font-display text-3xl font-bold md:text-4xl">Our Core Values</h2>
-            <p className="mt-4 text-muted-foreground">What drives us to build the best platform for our users.</p>
+            <h2 className="font-display text-3xl font-bold md:text-4xl">{t("about.values")}</h2>
+            <p className="mt-4 text-muted-foreground">{t("about.subtitle")}</p>
           </div>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            <ValueCard icon={<Globe />} title="Global Presence" text="Operating in over 50 countries with a growing list of premium partners." />
-            <ValueCard icon={<Users />} title="Community First" text="Designed meticulously around user feedback and traveler needs." />
-            <ValueCard icon={<Shield />} title="Secure Platform" text="Enterprise-grade security protecting your data and transactions." />
-            <ValueCard icon={<Zap />} title="Instant Booking" text="Lightning-fast reservations via our modern infrastructure." />
+            <ValueCard icon={<Globe />} title={t("about.value1.title")} text={t("about.value1.desc")} />
+            <ValueCard icon={<Users />} title={t("about.value2.title")} text={t("about.value2.desc")} />
+            <ValueCard icon={<Shield />} title={t("about.value3.title")} text={t("about.value3.desc")} />
+            <ValueCard icon={<Zap />} title={t("about.value4.title")} text={t("about.value4.desc")} />
           </div>
         </div>
       </section>
@@ -48,14 +48,9 @@ function AboutPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
-              <h2 className="font-display text-3xl font-bold sm:text-4xl mb-6">Our Story</h2>
+              <h2 className="font-display text-3xl font-bold sm:text-4xl mb-6">{t("about.mission")}</h2>
               <p className="text-muted-foreground mb-4 leading-relaxed">
-                Founded in 2023, Stayly began with a simple idea: booking a hotel should be as relaxing as the vacation itself.
-                We noticed that existing platforms were cluttered, slow, and full of hidden fees.
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                We rebuilt the entire process from the ground up prioritizing speed, transparency, and beautiful user experience.
-                Today, thousands of travelers trust us to handle their accommodations around the world.
+                {t("about.missionDesc")}
               </p>
             </div>
             <div className="relative rounded-2xl overflow-hidden shadow-elegant">
