@@ -1,10 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-export const Route = createFileRoute('/contact')({
+export const Route = createFileRoute("/contact")({
   head: () => ({ meta: [{ title: "Contact Us — Stayly" }] }),
   component: ContactPage,
 });
@@ -31,27 +31,45 @@ function ContactPage() {
           </div>
 
           <div className="mx-auto">
-
-          
-
             {/* Contact Form */}
             <div className="lg:col-span-2 ">
               <div className="rounded-3xl border border-border bg-card p-8 sm:p-10 shadow-elegant">
                 <h2 className="font-display text-2xl font-bold mb-6">{t("contact.form")}</h2>
                 <form onSubmit={onSubmit} className="space-y-6">
                   <label className="block">
-                    <span className="mb-2 block text-sm font-medium text-foreground">{t("contact.name")}</span>
-                    <input type="text" required className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" placeholder={t("contact.name")} />
+                    <span className="mb-2 block text-sm font-medium text-foreground">
+                      {t("contact.name")}
+                    </span>
+                    <input
+                      type="text"
+                      required
+                      className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                      placeholder={t("contact.name")}
+                    />
                   </label>
 
                   <label className="block">
-                    <span className="mb-2 block text-sm font-medium text-foreground">{t("contact.email")}</span>
-                    <input type="email" required className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" placeholder="john@example.com" />
+                    <span className="mb-2 block text-sm font-medium text-foreground">
+                      {t("contact.email")}
+                    </span>
+                    <input
+                      type="email"
+                      required
+                      className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                      placeholder="john@example.com"
+                    />
                   </label>
 
                   <label className="block">
-                    <span className="mb-2 block text-sm font-medium text-foreground">{t("contact.message")}</span>
-                    <textarea required rows={5} className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none" placeholder={t("contact.subtitle")}></textarea>
+                    <span className="mb-2 block text-sm font-medium text-foreground">
+                      {t("contact.message")}
+                    </span>
+                    <textarea
+                      required
+                      rows={5}
+                      className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none"
+                      placeholder={t("contact.subtitle")}
+                    ></textarea>
                   </label>
 
                   <Button type="submit" size="lg" className="w-full sm:w-auto gap-2">
@@ -60,7 +78,6 @@ function ContactPage() {
                 </form>
               </div>
             </div>
-
           </div>
         </div>
       </section>
@@ -68,7 +85,17 @@ function ContactPage() {
   );
 }
 
-function ContactCard({ icon, title, detail, sub }: { icon: React.ReactNode; title: string; detail: string; sub: string }) {
+function ContactCard({
+  icon,
+  title,
+  detail,
+  sub,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  detail: string;
+  sub: string;
+}) {
   return (
     <div className="flex items-start gap-4 rounded-2xl border border-border bg-card p-6 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">

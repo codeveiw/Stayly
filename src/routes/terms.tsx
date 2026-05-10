@@ -1,8 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { Copy, Scale, ShieldCheck } from "lucide-react";
 
-export const Route = createFileRoute('/terms')({
+export const Route = createFileRoute("/terms")({
   head: () => ({ meta: [{ title: "Terms and Conditions — Stayly" }] }),
   component: TermsPage,
 });
@@ -27,15 +27,15 @@ function TermsPage() {
 
           {[...Array(8)].map((_, i) => (
             <div key={i}>
-              <h2>{i + 1}. {t(`terms.section${i + 1}`)}</h2>
+              <h2>
+                {i + 1}. {t(`terms.section${i + 1}`)}
+              </h2>
               <p>{t(`terms.section${i + 1}Text`)}</p>
             </div>
           ))}
 
           <div className="mt-12 rounded-xl bg-muted/30 p-6 border border-border">
-            <p className="m-0 text-sm text-foreground">
-              {t("terms.clarification")}
-            </p>
+            <p className="m-0 text-sm text-foreground">{t("terms.clarification")}</p>
           </div>
         </div>
       </div>
@@ -49,5 +49,5 @@ function Pill({ icon, title }: { icon: React.ReactNode; title: string }) {
       <span className="*:h-4 *:w-4 text-primary">{icon}</span>
       {title}
     </div>
-  )
+  );
 }

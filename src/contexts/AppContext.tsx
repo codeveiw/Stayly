@@ -52,10 +52,10 @@ const LS = {
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(() =>
-    typeof window !== "undefined" ? ((localStorage.getItem(LS.lang) as Lang) || "en") : "en"
+    typeof window !== "undefined" ? (localStorage.getItem(LS.lang) as Lang) || "en" : "en",
   );
   const [theme, setTheme] = useState<Theme>(() =>
-    typeof window !== "undefined" ? ((localStorage.getItem(LS.theme) as Theme) || "light") : "light"
+    typeof window !== "undefined" ? (localStorage.getItem(LS.theme) as Theme) || "light" : "light",
   );
   const [user, setUser] = useState<User | null>(() => {
     if (typeof window === "undefined") return null;
@@ -88,12 +88,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Check authentication on mount
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token && !user) {
-      api.getCurrentUser()
-        .then(response => setUser(response.user))
+      api
+        .getCurrentUser()
+        .then((response) => setUser(response.user))
         .catch(() => {
-          localStorage.removeItem('token');
+          localStorage.removeItem("token");
         });
     }
   }, []);
@@ -111,11 +112,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const register: AppCtx["register"] = async (name, email, password) => {
     try {
       const response = await api.register({ name, email, password });
-      localStorage.setItem('token', response.token);
+      localStorage.setItem("token", response.token);
       setUser(response.user);
       return true;
     } catch (error) {
-      console.error('Registration failed:', error);
+      console.error("Registration failed:", error);
       return false;
     }
   };
@@ -123,23 +124,34 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const login: AppCtx["login"] = async (email, password) => {
     try {
       const response = await api.login({ email, password });
-      localStorage.setItem('token', response.token);
+      localStorage.setItem("token", response.token);
       setUser(response.user);
       return true;
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error("Login failed:", error);
       return false;
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setUser(null);
   };
 
   const value = useMemo<AppCtx>(
-    () => ({ lang, setLang, theme, toggleTheme, user, login, register, logout, pendingBooking, setPendingBooking }),
-    [lang, theme, user, pendingBooking]
+    () => ({
+      lang,
+      setLang,
+      theme,
+      toggleTheme,
+      user,
+      login,
+      register,
+      logout,
+      pendingBooking,
+      setPendingBooking,
+    }),
+    [lang, theme, user, pendingBooking],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

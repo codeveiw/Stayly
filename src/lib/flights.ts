@@ -41,53 +41,53 @@ export async function searchFlights(params: {
   // Mock data for now
   const mockFlights: Flight[] = [
     {
-      id: '1',
-      flightNumber: 'AA101',
-      airline: 'American Airlines',
+      id: "1",
+      flightNumber: "AA101",
+      airline: "American Airlines",
       departure: {
-        airport: 'JFK',
-        city: 'New York',
-        country: 'USA',
-        time: '2024-12-01T08:00:00Z'
+        airport: "JFK",
+        city: "New York",
+        country: "USA",
+        time: "2024-12-01T08:00:00Z",
       },
       arrival: {
-        airport: 'LAX',
-        city: 'Los Angeles',
-        country: 'USA',
-        time: '2024-12-01T11:30:00Z'
+        airport: "LAX",
+        city: "Los Angeles",
+        country: "USA",
+        time: "2024-12-01T11:30:00Z",
       },
       duration: 330,
       price: 299,
-      class: 'economy',
+      class: "economy",
       availableSeats: 150,
       totalSeats: 180,
-      status: 'scheduled',
-      aircraft: 'Boeing 737'
+      status: "scheduled",
+      aircraft: "Boeing 737",
     },
     {
-      id: '2',
-      flightNumber: 'UA202',
-      airline: 'United Airlines',
+      id: "2",
+      flightNumber: "UA202",
+      airline: "United Airlines",
       departure: {
-        airport: 'ORD',
-        city: 'Chicago',
-        country: 'USA',
-        time: '2024-12-01T14:00:00Z'
+        airport: "ORD",
+        city: "Chicago",
+        country: "USA",
+        time: "2024-12-01T14:00:00Z",
       },
       arrival: {
-        airport: 'SFO',
-        city: 'San Francisco',
-        country: 'USA',
-        time: '2024-12-01T16:45:00Z'
+        airport: "SFO",
+        city: "San Francisco",
+        country: "USA",
+        time: "2024-12-01T16:45:00Z",
       },
       duration: 285,
       price: 249,
-      class: 'economy',
+      class: "economy",
       availableSeats: 120,
       totalSeats: 150,
-      status: 'scheduled',
-      aircraft: 'Boeing 777'
-    }
+      status: "scheduled",
+      aircraft: "Boeing 777",
+    },
   ];
 
   return mockFlights;
@@ -96,32 +96,32 @@ export async function searchFlights(params: {
 export async function getFlightById(id: string): Promise<FlightWithReviews | null> {
   // Mock data for now
   const mockFlight: Flight = {
-    id: '1',
-    flightNumber: 'AA101',
-    airline: 'American Airlines',
+    id: "1",
+    flightNumber: "AA101",
+    airline: "American Airlines",
     departure: {
-      airport: 'JFK',
-      city: 'New York',
-      country: 'USA',
-      time: '2024-12-01T08:00:00Z'
+      airport: "JFK",
+      city: "New York",
+      country: "USA",
+      time: "2024-12-01T08:00:00Z",
     },
     arrival: {
-      airport: 'LAX',
-      city: 'Los Angeles',
-      country: 'USA',
-      time: '2024-12-01T11:30:00Z'
+      airport: "LAX",
+      city: "Los Angeles",
+      country: "USA",
+      time: "2024-12-01T11:30:00Z",
     },
     duration: 330,
     price: 299,
-    class: 'economy',
+    class: "economy",
     availableSeats: 150,
     totalSeats: 180,
-    status: 'scheduled',
-    aircraft: 'Boeing 737'
+    status: "scheduled",
+    aircraft: "Boeing 737",
   };
 
   return {
     flight: mockFlight,
-    reviews: []
+    reviews: [],
   };
 }

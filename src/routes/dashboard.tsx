@@ -25,7 +25,7 @@ function Dashboard() {
   }, [user, navigate]);
 
   const { data: bookings = [], isLoading } = useQuery<Booking[]>({
-    queryKey: ['bookings'],
+    queryKey: ["bookings"],
     queryFn: () => api.getBookings(),
     enabled: !!user,
   });
@@ -33,12 +33,12 @@ function Dashboard() {
   const cancelMutation = useMutation({
     mutationFn: (id: string) => api.cancelBooking(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      queryClient.invalidateQueries({ queryKey: ["bookings"] });
       toast.success(t("booking.cancelled"));
     },
     onError: () => {
       toast.error(t("Something went wrong"));
-    }
+    },
   });
 
   if (!user || isLoading) return null;
@@ -70,25 +70,41 @@ function Dashboard() {
               className="grid gap-4 overflow-hidden rounded-2xl border border-border bg-card shadow-soft sm:grid-cols-[180px_1fr_auto]"
             >
               <Link to="/hotels/$hotelId" params={{ hotelId: b.hotelId }} className="block">
-                <img src={b.hotelImage} alt={b.hotelName} className="h-full max-h-44 w-full object-cover" loading="lazy" />
+                <img
+                  src={b.hotelImage}
+                  alt={b.hotelName}
+                  className="h-full max-h-44 w-full object-cover"
+                  loading="lazy"
+                />
               </Link>
               <div className="p-4 sm:py-5">
                 <div className="flex items-center gap-2">
                   <h3 className="font-display text-lg font-semibold">{b.hotelName}</h3>
                   <span
-                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${b.status === "confirmed"
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
+                      b.status === "confirmed"
                         ? "bg-success/15 text-success"
                         : "bg-destructive/15 text-destructive"
-                      }`}
+                    }`}
                   >
-                    {b.status === "confirmed" ? t("booking.confirmedTag") : t("booking.cancelledTag")}
+                    {b.status === "confirmed"
+                      ? t("booking.confirmedTag")
+                      : t("booking.cancelledTag")}
                   </span>
                 </div>
                 <div className="mt-3 grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
-                  <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> {b.checkIn} → {b.checkOut}</span>
-                  <span className="flex items-center gap-1.5"><Users className="h-4 w-4" /> {t("search.guest", { count: b.guests })}</span>
-                  <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" /> {t("hotel.nights", { count: b.nights })}</span>
-                  <span className="font-semibold text-foreground">{t("hotel.total")}: ${b.total}</span>
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="h-4 w-4" /> {b.checkIn} → {b.checkOut}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Users className="h-4 w-4" /> {t("search.guest", { count: b.guests })}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4" /> {t("hotel.nights", { count: b.nights })}
+                  </span>
+                  <span className="font-semibold text-foreground">
+                    {t("hotel.total")}: ${b.total}
+                  </span>
                 </div>
               </div>
               <div className="flex items-center justify-end p-4 sm:py-5">

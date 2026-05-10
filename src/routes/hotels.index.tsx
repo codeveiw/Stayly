@@ -37,7 +37,16 @@ export const Route = createFileRoute("/hotels/")({
   component: HotelsList,
 });
 
-const ALL_AMENITIES: AmenityKey[] = ["wifi", "pool", "breakfast", "parking", "gym", "spa", "bar", "ac"];
+const ALL_AMENITIES: AmenityKey[] = [
+  "wifi",
+  "pool",
+  "breakfast",
+  "parking",
+  "gym",
+  "spa",
+  "bar",
+  "ac",
+];
 
 function HotelsList() {
   const { t } = useTranslation();
@@ -50,8 +59,8 @@ function HotelsList() {
   const [openMobile, setOpenMobile] = useState(false);
 
   const { data: hotels = [], isLoading } = useQuery({
-    queryKey: ['hotels', search.q],
-    queryFn: () => api.getHotels({ q: search.q })
+    queryKey: ["hotels", search.q],
+    queryFn: () => api.getHotels({ q: search.q }),
   });
 
   const filtered = useMemo(() => {
@@ -62,8 +71,10 @@ function HotelsList() {
       if (selected.length && !selected.every((a) => h.amenities.includes(a))) return false;
       return true;
     });
-    if (search.sort === "priceAsc") list = [...list].sort((a, b) => (a.price || 0) - (b.price || 0));
-    else if (search.sort === "priceDesc") list = [...list].sort((a, b) => (b.price || 0) - (a.price || 0));
+    if (search.sort === "priceAsc")
+      list = [...list].sort((a, b) => (a.price || 0) - (b.price || 0));
+    else if (search.sort === "priceDesc")
+      list = [...list].sort((a, b) => (b.price || 0) - (a.price || 0));
     else list = [...list].sort((a, b) => b.rating - a.rating);
     return list;
   }, [hotels, search.sort, minRating, selected, priceRange]);
@@ -109,10 +120,11 @@ function HotelsList() {
               key={r}
               type="button"
               onClick={() => setMinRating(r)}
-              className={`flex items-center gap-1 rounded-full border px-2 py-1.5 text-xs font-medium transition-colors ${minRating === r
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border hover:bg-muted "
-                }`}
+              className={`flex items-center gap-1 rounded-full border px-2 py-1.5 text-xs font-medium transition-colors ${
+                minRating === r
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border hover:bg-muted "
+              }`}
             >
               <Star className="h-3 w-3" /> {r === 0 ? "Any" : `${r}+`}
             </button>

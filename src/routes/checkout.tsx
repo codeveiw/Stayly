@@ -62,7 +62,11 @@ function CheckoutPage() {
   };
 
   const formatCard = (v: string) =>
-    v.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim();
+    v
+      .replace(/\D/g, "")
+      .slice(0, 16)
+      .replace(/(.{4})/g, "$1 ")
+      .trim();
 
   const formatExpiry = (v: string) => {
     const d = v.replace(/\D/g, "").slice(0, 4);
@@ -93,15 +97,17 @@ function CheckoutPage() {
 
       setPendingBooking(null);
       toast.success(t("checkout.success"));
-      navigate({ to: "/success", search: { id: response.booking?.id || (response as any).id || "success" } });
+      navigate({
+        to: "/success",
+        search: { id: response.booking?.id || (response as any).id || "success" },
+      });
     } catch (error: any) {
       setProcessing(false);
       toast.error(error.message || t("checkout.failed"));
     }
   };
 
-  const update = (k: keyof FormState, v: string) =>
-    setForm((f) => ({ ...f, [k]: v }));
+  const update = (k: keyof FormState, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   return (
     <div className="mx-auto max-w-6xl animate-fade-in px-4 py-8 sm:px-6">
@@ -215,7 +221,13 @@ function CheckoutPage() {
 }
 
 function Field({
-  label, value, onChange, error, placeholder, inputMode, autoComplete,
+  label,
+  value,
+  onChange,
+  error,
+  placeholder,
+  inputMode,
+  autoComplete,
 }: {
   label: string;
   value: string;
@@ -237,15 +249,24 @@ function Field({
         placeholder={placeholder}
         inputMode={inputMode}
         autoComplete={autoComplete}
-        className={`w-full rounded-lg border bg-background px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary ${error ? "border-destructive" : "border-input"
-          }`}
+        className={`w-full rounded-lg border bg-background px-3 py-2.5 text-sm outline-none transition-colors focus:border-primary ${
+          error ? "border-destructive" : "border-input"
+        }`}
       />
       {error && <span className="mt-1 block text-xs text-destructive">{error}</span>}
     </label>
   );
 }
 
-function Row({ icon, label, children }: { icon?: React.ReactNode; label: string; children: React.ReactNode }) {
+function Row({
+  icon,
+  label,
+  children,
+}: {
+  icon?: React.ReactNode;
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="flex items-start justify-between gap-3">
       <span className="flex items-center gap-1.5 text-muted-foreground">

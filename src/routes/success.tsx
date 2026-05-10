@@ -27,7 +27,7 @@ function SuccessPage() {
   const id = search.id || "";
 
   const { data, isLoading } = useQuery({
-    queryKey: ['booking', id],
+    queryKey: ["booking", id],
     queryFn: () => api.getBookingById(id),
     enabled: !!id,
   });

@@ -5,7 +5,7 @@ import type { Hotel } from "@/lib/hotels";
 
 export function HotelCard({ hotel }: { hotel: Hotel }) {
   const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
+  const isAr = i18n.language === "ar";
 
   const discount = hotel.oldPrice
     ? Math.round(((hotel.oldPrice - (hotel.price || 0)) / hotel.oldPrice) * 100)
@@ -35,9 +35,12 @@ export function HotelCard({ hotel }: { hotel: Hotel }) {
         </span>
       </div>
       <div className="p-4">
-        <h3 className="truncate font-display text-lg font-semibold">{isAr && hotel.name_ar ? hotel.name_ar : hotel.name}</h3>
+        <h3 className="truncate font-display text-lg font-semibold">
+          {isAr && hotel.name_ar ? hotel.name_ar : hotel.name}
+        </h3>
         <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
-          <MapPin className="h-3.5 w-3.5" /> {(isAr && hotel.city_ar) ? hotel.city_ar : hotel.city}, {(isAr && hotel.country_ar) ? hotel.country_ar : hotel.country}
+          <MapPin className="h-3.5 w-3.5" /> {isAr && hotel.city_ar ? hotel.city_ar : hotel.city},{" "}
+          {isAr && hotel.country_ar ? hotel.country_ar : hotel.country}
         </p>
         <div className="mt-3 flex items-end justify-between">
           <div>
@@ -46,7 +49,9 @@ export function HotelCard({ hotel }: { hotel: Hotel }) {
             )}
             <p className="font-display text-xl font-bold text-primary">
               ${hotel.price}
-              <span className="ms-1 text-xs font-normal text-muted-foreground">/ {t("hotel.perNight")}</span>
+              <span className="ms-1 text-xs font-normal text-muted-foreground">
+                / {t("hotel.perNight")}
+              </span>
             </p>
           </div>
           <span className="text-xs text-muted-foreground">
