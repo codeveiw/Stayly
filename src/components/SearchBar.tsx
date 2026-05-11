@@ -80,15 +80,15 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
 
   const errors = useMemo(() => {
     const e: { destination?: string; checkIn?: string; checkOut?: string; guests?: string } = {};
-    if (!destination.trim()) e.destination = "Destination is required";
-    if (!checkIn) e.checkIn = "Check-in date is required";
-    if (!checkOut) e.checkOut = "Check-out date is required";
+    if (!destination.trim()) e.destination = t("search.errors.location", "Destination is required");
+    if (!checkIn) e.checkIn = t("search.errors.checkIn", "Check-in date is required");
+    if (!checkOut) e.checkOut = t("search.errors.checkOut", "Check-out date is required");
     else if (checkIn && new Date(checkOut) <= new Date(checkIn))
-      e.checkOut = "Check-out must be after check-in";
-    if (adults < 1) e.guests = "At least 1 adult is required";
-    if (rooms < 1) e.guests = "At least 1 room is required";
+      e.checkOut = t("search.errors.checkOutAfter", "Check-out must be after check-in");
+    if (adults < 1) e.guests = t("search.errors.guests", "At least 1 adult is required");
+    if (rooms < 1) e.guests = t("search.errors.rooms", "At least 1 room is required");
     return e;
-  }, [destination, checkIn, checkOut, adults, rooms]);
+  }, [destination, checkIn, checkOut, adults, rooms, t]);
 
   const isValid = Object.keys(errors).length === 0;
 
@@ -131,15 +131,14 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
     <form
       onSubmit={onSubmit}
       noValidate
-      className={`rounded-2xl border border-border bg-card p-3 shadow-elegant md:p-2 ${
-        compact ? "" : "animate-slide-up"
-      }`}
+      className={`rounded-2xl border border-border bg-card p-3 shadow-elegant md:p-2 ${compact ? "" : "animate-slide-up"
+        }`}
     >
       <div className="grid gap-3 md:grid-cols-[1.5fr_1fr_1fr_1.2fr_auto] md:gap-2">
         <div className="relative" ref={suggestionsRef}>
           <Field
             icon={<MapPin className="h-4 w-4" />}
-            label={"Destination"}
+            label={t("search.destination", "Destination")}
             error={showErr("destination")}
           >
             <input
@@ -150,7 +149,7 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
                 setShowSuggestions(true);
               }}
               onFocus={() => setShowSuggestions(true)}
-              placeholder={"City, region, or hotel"}
+              placeholder={t("search.locationPh", "City, region, or hotel")}
               aria-invalid={!!showErr("destination")}
               className="w-full bg-transparent text-sm font-medium outline-none placeholder:text-muted-foreground/70"
             />
@@ -161,13 +160,13 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
                 {isSearchingAPI && (
                   <div className="px-3 py-4 text-xs flex items-center justify-center text-muted-foreground">
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Searching places...
+                    {t("search.searching", "Searching places...")}
                   </div>
                 )}
                 {!isSearchingAPI && apiSuggestions.length > 0 && (
                   <>
                     <div className="px-3 py-2 text-xs font-semibold text-muted-foreground">
-                      Places match
+                      {t("search.placesMatch", "Places match")}
                     </div>
                     <ul>
                       {apiSuggestions.map((s, i) => (
@@ -191,7 +190,7 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
                 {!isSearchingAPI && apiSuggestions.length === 0 && recentSearches.length > 0 && (
                   <>
                     <div className="px-3 py-2 text-xs font-semibold text-muted-foreground">
-                      Recent Searches
+                      {t("search.recentSearchesTitle", "Recent Searches")}
                     </div>
                     <ul>
                       {recentSearches.map((s, i) => (
@@ -250,7 +249,7 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
                 error={showErr("guests")}
               >
                 <div className="w-full truncate bg-transparent text-sm font-medium">
-                  {adults} Adults, {children} Children, {rooms} Room{rooms > 1 && "s"}
+                  {adults} {t("search.adults", "Adults")}, {children} {t("search.childrenText", "Children")}, {rooms} {rooms > 1 ? t("search.room_other", "Rooms") : t("search.room_one", "Room")}
                 </div>
               </Field>
             </button>
@@ -259,8 +258,8 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm font-medium">Adults</div>
-                  <div className="text-xs text-muted-foreground">Age 13+</div>
+                  <div className="text-sm font-medium">{t("search.adults", "Adults")}</div>
+                  <div className="text-xs text-muted-foreground">{t("search.ageAdults", "Age 13+")}</div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -286,8 +285,8 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm font-medium">Children</div>
-                  <div className="text-xs text-muted-foreground">Ages 0-12</div>
+                  <div className="text-sm font-medium">{t("search.childrenText", "Children")}</div>
+                  <div className="text-xs text-muted-foreground">{t("search.ageChildren", "Ages 0-12")}</div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -313,7 +312,7 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm font-medium">Rooms</div>
+                  <div className="text-sm font-medium">{t("search.roomsText", "Rooms")}</div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -369,9 +368,8 @@ function Field({
 }) {
   return (
     <Component
-      className={`flex h-full w-full items-center gap-3 rounded-xl border bg-muted/40 px-3 py-2.5 transition-colors focus-within:bg-background ${
-        error ? "border-destructive/60" : "border-transparent focus-within:border-primary/40"
-      }`}
+      className={`flex h-full w-full items-center gap-3 rounded-xl border bg-muted/40 px-3 py-2.5 transition-colors focus-within:bg-background ${error ? "border-destructive/60" : "border-transparent focus-within:border-primary/40"
+        }`}
     >
       <span className="text-muted-foreground">{icon}</span>
       <span className="flex min-w-0 flex-1 flex-col">
