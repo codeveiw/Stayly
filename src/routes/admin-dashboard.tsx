@@ -5,7 +5,7 @@ import { useApp } from "@/contexts/AppContext";
 import { api } from "@/lib/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Users, LayoutDashboard, Calendar, Hotel } from "lucide-react";
+import { Users, LayoutDashboard, Calendar, Hotel, Home } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin-dashboard")({
@@ -61,6 +61,14 @@ function AdminDashboard() {
             label={t("admin.hotels")}
             onClick={() => setActiveTab("hotels")}
           />
+          <div className="my-2 border-t border-border"></div>
+          <button
+            onClick={() => navigate({ to: "/dashboard" })}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <span className="*:h-4 *:w-4"><Home /></span>
+            {t("nav.home")}
+          </button>
         </nav>
       </aside>
 
